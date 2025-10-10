@@ -2,8 +2,15 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import userRoutes from "./routes/user.js";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+})
 
 const PORT = process.env.PORT || 5000;
 
@@ -11,7 +18,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/api/v1/user", userRoutes);
+app.use("/api/v1", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("User service is running");
