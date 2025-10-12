@@ -20,10 +20,6 @@ app.use(express.json());
 
 app.use("/api/v1", userRoutes);
 
-app.get("/", (req, res) => {
-  res.send("User service is running");
-});
-
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`User service is running on port ${PORT}`);
