@@ -79,13 +79,14 @@ export const getSingleBlog = TryCatch(async (req, res) => {
 
   console.log("Serving blog from database");
 
-  await redisClient.set(cacheKey,JSON.stringify(blog[0]),"EX",1800)
-
-  // Send response
-  res.status(200).json({
+  const responseData = {
     success: true,
     message: "Blog fetched successfully",
     blog: blog[0],
     author,
-  });
+  };
+
+  await redisClient.set(cacheKey, JSON.stringify(responseData), "EX", 1800);
+
+  res.status(200).json(responseData);
 });
