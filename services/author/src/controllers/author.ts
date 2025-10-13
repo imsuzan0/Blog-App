@@ -8,24 +8,34 @@ import { sql } from "../utils/db.js";
 export const createBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
   const { title, description, blogcontent, category } = req.body;
 
+  if (!title || !description || !blogcontent || !category) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
   const file = req.file;
+  let imageUrl =
+    "https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg";
 
-  if (!file) {
-    return res.status(400).json({ message: "File is required" });
+  if (file) {
+    const fileBuffer = getBuffer(file);
+
+    if (!fileBuffer || !fileBuffer.content) {
+      return res.status(400).json({ message: "File is invalid" });
+    }
+
+    const cloud = await cloudinary.uploader.upload(fileBuffer.content, {
+      folder: "blogs",
+    });
+
+    imageUrl = cloud.secure_url;
   }
 
-  const fileBuffer = getBuffer(file);
+  const result = await sql`INSERT INTO blogs
+    (title, description, image, blogcontent, category, author)
+    VALUES
+    (${title}, ${description}, ${imageUrl}, ${blogcontent}, ${category}, ${req.user?._id})
+    RETURNING *`;
 
-  if (!fileBuffer || !fileBuffer.content) {
-    return res.status(400).json({ message: "File is required" });
-  }
-
-  const cloud = await cloudinary.uploader.upload(fileBuffer.content, {
-    folder: "blogs",
-  });
-
-  const result =
-    await sql`INSERT INTO blogs (title,description,image,blogcontent,category,author) VALUES (${title},${description},${cloud.secure_url},${blogcontent},${category},${req.user?._id}) RETURNING *`;
   res
     .status(201)
     .json({ message: "Blog created successfully", blog: result[0] });
