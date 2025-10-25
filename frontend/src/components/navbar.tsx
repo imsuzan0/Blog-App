@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { LogIn, MenuIcon, X } from "lucide-react";
+import { CircleUserRound, LogIn, MenuIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAppData } from "@/context/AppContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { loading, isAuth } = useAppData();
 
   return (
     <nav className="bg-white shadow-md p-4 z-50">
@@ -41,14 +44,18 @@ const Navbar = () => {
               Saved BLogs
             </Link>
           </li>
-          <li>
-            <Link
-              href={"/login"}
-              className="hover:text-blue-500 hover:scale-105 transition-transform duration-300"
-            >
-              <LogIn />
-            </Link>
-          </li>
+         {loading ? "": <li>
+            {isAuth ? (
+              <CircleUserRound />
+            ) : (
+              <Link
+                href={"/login"}
+                className="hover:text-blue-500 hover:scale-105 transition-transform duration-300"
+              >
+                <LogIn />
+              </Link>
+            )}
+          </li>}
         </ul>
       </div>
       <div
@@ -74,14 +81,18 @@ const Navbar = () => {
               Saved BLogs
             </Link>
           </li>
-          <li>
-            <Link
-              href={"/login"}
-              className="hover:text-blue-500 hover:scale-105 transition-transform duration-300"
-            >
-              <LogIn />
-            </Link>
-          </li>
+         {loading ? "": <li>
+            {isAuth ? (
+              <CircleUserRound />
+            ) : (
+              <Link
+                href={"/login"}
+                className="hover:text-blue-500 hover:scale-105 transition-transform duration-300"
+              >
+                <LogIn />
+              </Link>
+            )}
+          </li>}
         </ul>
       </div>
     </nav>
