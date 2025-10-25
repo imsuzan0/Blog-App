@@ -2,6 +2,9 @@
 
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { Toaster } from "react-hot-toast";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import axios from "axios";
 
 export const user_service = "http://localhost:5000";
 export const author_service = "http://localhost:5001";
@@ -36,35 +39,60 @@ interface AppProviderProps {
 
 interface AppContextType {
   user: User | null;
+  isAuth: boolean;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
+
 
   async function fetchUser() {
     try {
       const token = Cookies.get("token");
+
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       const { data } = await axios.get(`${user_service}/api/v1/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setUser(data);
       setIsAuth(true);
-      setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log("Error fetching user:", error);
+      setIsAuth(false);
+    } finally {
+      setLoading(false);
     }
   }
 
   useEffect(() => {
     fetchUser();
   }, []);
-  return <AppContext.Provider value={{ user }}>{children}</AppContext.Provider>;
+
+  return (
+    <AppContext.Provider
+      value={{ user, isAuth, loading, setLoading, setIsAuth, setUser }}
+    >
+      <GoogleOAuthProvider clientId="683718027551-q6q8klh8mvr34p90hr0u11lt14cv01jg.apps.googleusercontent.com">
+        {children}
+        <Toaster />
+      </GoogleOAuthProvider>
+    </AppContext.Provider>
+  );
 };
 
 export const useAppData = (): AppContextType => {
