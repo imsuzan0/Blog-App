@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { CircleUserRound, LogIn, MenuIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppData } from "@/context/AppContext";
+import { redirect } from "next/navigation";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +47,7 @@ const Navbar = () => {
           </li>
          {loading ? "": <li>
             {isAuth ? (
-              <CircleUserRound />
+              <CircleUserRound className="cursor-pointer" onClick={()=>redirect("/profile")} />
             ) : (
               <Link
                 href={"/login"}
@@ -83,7 +84,7 @@ const Navbar = () => {
           </li>
          {loading ? "": <li>
             {isAuth ? (
-              <CircleUserRound />
+              <CircleUserRound className="cursor-pointer" onClick={()=>redirect("/profile")} />
             ) : (
               <Link
                 href={"/login"}
