@@ -2,7 +2,7 @@
 
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import axios from "axios";
 
@@ -44,6 +44,7 @@ interface AppContextType {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  logOutUser: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -52,7 +53,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
-
 
   async function fetchUser() {
     try {
@@ -69,7 +69,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         },
       });
 
-      setUser(data);
+      setUser(data.user);
       setIsAuth(true);
     } catch (error) {
       console.log("Error fetching user:", error);
@@ -79,13 +79,28 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   }
 
+  async function logOutUser() {
+    Cookies.remove("token");
+    setIsAuth(false);
+    setUser(null);
+    toast.success("Logged out successfully");
+  }
+
   useEffect(() => {
     fetchUser();
   }, []);
 
   return (
     <AppContext.Provider
-      value={{ user, isAuth, loading, setLoading, setIsAuth, setUser }}
+      value={{
+        user,
+        isAuth,
+        loading,
+        setLoading,
+        setIsAuth,
+        setUser,
+        logOutUser,
+      }}
     >
       <GoogleOAuthProvider clientId="683718027551-q6q8klh8mvr34p90hr0u11lt14cv01jg.apps.googleusercontent.com">
         {children}
