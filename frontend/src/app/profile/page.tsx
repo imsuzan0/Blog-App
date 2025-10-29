@@ -206,7 +206,7 @@ const ProfilePage = () => {
                 <Button variant={"destructive"} onClick={logOutHandler}>
                   Logout
                 </Button>
-                <Button>Add Blog</Button>
+                <Button onClick={()=>router.push("/blog/new")}>Add Blog</Button>
 
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
