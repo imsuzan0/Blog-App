@@ -18,6 +18,7 @@ export default function RootLayout({
       <body>
         <AppProvider>
           <Navbar />
+          
           {children}
         </AppProvider>
       </body>
