@@ -35,7 +35,7 @@ export const getAllBlogs = TryCatch(async (req, res) => {
     blogs = await sql`SELECT * FROM blogs ORDER BY created_at DESC`;
   }
   if (blogs.length === 0) {
-    return res.status(404).json({ success: false, message: "No blogs found" });
+    return res.status(200).json({ success: false, message: "No blogs found",blogs:[] });
   }
 
   console.log("Serving blogs from database");
@@ -44,7 +44,7 @@ export const getAllBlogs = TryCatch(async (req, res) => {
 
   res
     .status(200)
-    .json({ success: true, message: "Blogs fetched successfully", blogs });
+    .json(blogs);
 });
 
 export const getSingleBlog = TryCatch(async (req, res) => {
