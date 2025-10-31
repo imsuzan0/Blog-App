@@ -16,7 +16,7 @@ import { RefreshCw } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { author_service } from "@/context/AppContext";
+import { author_service, useAppData } from "@/context/AppContext";
 import toast from "react-hot-toast";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
@@ -51,6 +51,8 @@ const AddBlog = () => {
   const [aiTitle, setAiTitle] = useState(false);
   const [aiDescription, setAiDescription] = useState(false);
   const [aiBlogLoading, setAiBlogLoading] = useState(false);
+
+  const {fetchBlogs}=useAppData()
 
   const [loading, setLoading] = useState(false);
 
@@ -88,7 +90,7 @@ const AddBlog = () => {
 
     try {
       const token = Cookies.get("token");
-      const { data } = await axios.post(
+      const { data }: any = await axios.post(
         `${author_service}/api/v1/blog/new`,
         formDataToSend,
         {
@@ -106,6 +108,7 @@ const AddBlog = () => {
         blogcontent: "",
       });
       setContent("");
+      fetchBlogs();
     } catch (error) {
       toast.error("Problem while adding blog");
     } finally {
@@ -116,7 +119,7 @@ const AddBlog = () => {
   const aiTitleResponse = async () => {
     try {
       setAiTitle(true);
-      const { data } = await axios.post(`${author_service}/api/v1/ai/title`, {
+      const { data }: any = await axios.post(`${author_service}/api/v1/ai/title`, {
         text: formData.title,
       });
       setFormData({ ...formData, title: data.result });
@@ -131,7 +134,7 @@ const AddBlog = () => {
   const aiDescriptionResponse = async () => {
     try {
       setAiDescription(true);
-      const { data } = await axios.post(
+      const { data }: any = await axios.post(
         `${author_service}/api/v1/ai/description`,
         {
           title: formData.title,
@@ -150,7 +153,7 @@ const AddBlog = () => {
   const aiBlogResponse = async () => {
     try {
       setAiBlogLoading(true);
-      const { data } = await axios.post(`${author_service}/api/v1/ai/blog`, {
+      const { data }: any = await axios.post(`${author_service}/api/v1/ai/blog`, {
         blog: formData.blogcontent,
       });
       setContent(data.html);
