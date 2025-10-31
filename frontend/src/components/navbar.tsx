@@ -31,7 +31,7 @@ const Navbar = () => {
         <ul className="hidden md:flex justify-center items-center space-x-6 text-gray-700">
           <li>
             <Link
-              href={"/"}
+              href={"/blogs"}
               className="hover:text-blue-500 hover:scale-105 transition-transform duration-300"
             >
               Home
@@ -68,7 +68,7 @@ const Navbar = () => {
         <ul className="flex flex-col justify-center items-center space-y-4 p-4 text-grey-700 bg-white shadow-md">
           <li>
             <Link
-              href={"/"}
+              href={"/blogs"}
               className="hover:text-blue-500 hover:scale-105 transition-transform duration-300"
             >
               Home
